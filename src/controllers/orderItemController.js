@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const history = require('./src/models/historyModel');
 const products = require('./src/models/productModel');
 const cart = require('./src/model/cartModel');
@@ -9,7 +8,11 @@ const orderItem = async (req, res)=>{
         if(!isItem){
             return res.json({message: "Item isnt available"});
         }
-        if( req.body.quantity> Number(isItem.stock)){
+        const update = await products.findByOneAndUpdate({ _id: req.body.productId, 
+             stock : { $gte : req.body.quantity} },
+             { $inc : { stock : -req.body.quantity } },
+             { new: true});
+        if(!update){
             return res.json({ message: 'Item is out of stock'});
         }
         const order = { user: req.user,  orderItem: [{product: isItem._id, quantity: req.body.quantity}], 
