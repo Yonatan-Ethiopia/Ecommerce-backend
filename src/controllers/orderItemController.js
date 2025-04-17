@@ -8,7 +8,7 @@ const orderItem = async (req, res)=>{
         if(!isItem){
             return res.json({message: "Item isnt available"});
         }
-        const update = await products.findByOneAndUpdate({ _id: req.body.productId, 
+        const update = await products.findOneAndUpdate({ _id: req.body.productId, 
              stock : { $gte : req.body.quantity} },
              { $inc : { stock : -req.body.quantity } },
              { new: true});
