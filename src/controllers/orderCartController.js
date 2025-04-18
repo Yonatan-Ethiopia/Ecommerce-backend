@@ -10,5 +10,23 @@ const checkCart = async (cart) =>{
         }
     }return { succes: true}
 }
-const const
-const cartStatus = checkCart()
+const const cart = cart.findById(req.body.cart)
+const cartStatus = checkCart(cart);
+if( cartStatus.error == 'Product not found'){
+   return res.json({ message: `Product ${cartStatus.item} not found` });
+}
+if( cartStatus.error == 'Not enough stock'){
+   return res.json({ message: `Not enough stock for item ${cartStatus.item}` });
+}
+if( cartStatus.success ){
+   for( let item of cart.item){
+       const checkItem = products.findOneAndUodate({
+           _id: item.product, stock: { $gte: item.quantity} },
+           { $inc: { stock: -item.quantity } },{ new: true} )
+        if( !checkItem){
+            return //what should I say
+        }
+        let order = { product: item.product, quantity: item.quantity }
+        history.create( {user: req.user , orderItem: [order]});
+       };
+}
