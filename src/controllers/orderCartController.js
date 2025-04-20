@@ -1,45 +1,33 @@
-const orderController = async ( req, res){
-    const checkCart = async () =>{
-        const const cart = await cart.findById(req.body.cart)
-        for( let item of cart.item){
-            const isProduct = await products.findById( item.product)
-            if(!isProduct){
-                return { error: 'Product not found', item}
-            }
-            const isStock = await products.findOne( { _id: item.product, stock: { $gte: item.quantity}});
-            if(!isStock){
-                return { error: 'Not enough stock', item}
-            }
-        }return { succes: true}
+const orderController = async ( req, res)=>{
+    const userCart = await cart.findById(req.body.cart)
+    if(!cart){
+        return res.json({ message: 'Cart not found'});
     }
-    
-    const cartStatus = checkCart(cart);
-    const finalOrder = async ( cartStatus ) => {
-        let orderItems = [];
-        if( cartStatus.error == 'Product not found'){
-           return res.json({ message: `Product ${cartStatus.item} not found` });
+    for( let item of cart.item){
+        const isProduct = await products.findById( item.product)
+        if(!isProduct){
+            return res.json({ error: 'Product not found', item});
         }
-        if( cartStatus.error == 'Not enough stock'){
-           return res.json({ message: `Not enough stock for item ${cartStatus.item}` });
+        const isStock = await products.findOne( { _id: item.product, stock: { $gte: item.quantity}});
+        if(!isStock){
+            return res.json({ error: 'Not enough stock', item});
         }
-        if( cartStatus.success ){
-           for( let item of cart.item){
-               const checkItem = await products.findOneAndUodate({
+    }
+    let orderItems = [];
+    for( let item of cart.item){
+        const checkItem = await products.findOneAndUodate({
                    _id: item.product, stock: { $gte: item.quantity} },
                    { $inc: { stock: -item.quantity } },{ new: true} )
-                if( !checkItem){
-                    return //what should I say
-                }
-                let order = { product: item.product, quantity: item.quantity }
-                
-                orderItems.push( order );
-               };
+        if( !checkItem){
+            return //what should I say
         }
-        return orderItems;
-    } 
-    const orders = finalOrder( cartStatus );
+        let order = { product: item.product, quantity: item.quantity }
+                
+        orderItems.push( order );
+    }
     const saveHistory = await history.create({ user: req.user, orderItems: orders});
-    res.json({ message: succesfull});
+    const clearcut = await cart.delete();
+    res.json({ message: 'succesfull'});
 }
 
 module.exports = orderController ;
