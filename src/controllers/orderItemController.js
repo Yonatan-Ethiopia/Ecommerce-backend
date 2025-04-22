@@ -1,3 +1,10 @@
+/**
+ * The below code is for ordering an item.
+ * First the cide checks if the item exists in the product model.
+ * Then if the item is available, will check if the item is in stock and decrease as much as the quantity of order from the stock.
+ * After that it will save the details of the order in to an object and save that object to history Model.
+ **/
+const mongoose = require('mongoose');
 const history = require('./src/models/historyModel');
 const products = require('./src/models/productModel');
 const cart = require('./src/model/cartModel');
