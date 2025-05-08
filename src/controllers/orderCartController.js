@@ -14,13 +14,13 @@ const history = require('./src/models/historyModel');
 const orderController = async ( req, res)=>{
     try{
         const userCart = await cart.findById(req.body.cart)
-        if(!cart){
+        if(!userCart){
             return res.json({ message: 'Cart not found'});
         }
-        if(cart.user != req.user){
+        if(userCart.user != req.user){
             return res.json({ message: 'Cart doesnt belong to user'});
         }
-        for( let item of cart.item){
+        for( let item of userCart.items){
             const isProduct = await products.findById( item.product)
             if(!isProduct){
                 return res.json({ error: 'Product not found', item});
@@ -31,8 +31,8 @@ const orderController = async ( req, res)=>{
             }
         }
         let orderItems = [];
-        for( let item of cart.item){
-            const checkItem = await products.findOneAndUodate({
+        for( let item of userCart.items){
+            const checkItem = await products.findOneAndUpdate({
                        _id: item.product, stock: { $gte: item.quantity} },
                        { $inc: { stock: -item.quantity } },{ new: true} )
             if( !checkItem){
