@@ -42,7 +42,7 @@ const orderController = async ( req, res)=>{
                     
             orderItems.push( order );
         }
-        const saveHistory = await history.create({ user: req.user, orderItems: orders});
+        const saveHistory = await history.create({ user: req.user, orderItems});
         res.json({ message: 'succesfull'});
     }catch(err){
         res.json({ error: err})
