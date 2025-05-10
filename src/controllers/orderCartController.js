@@ -15,19 +15,19 @@ const orderController = async ( req, res)=>{
     try{
         const userCart = await cart.findById(req.body.cart)
         if(!userCart){
-            return res.json({ message: 'Cart not found'});
+            return res.status(404).json({ success: false, message: 'Cart not found'});
         }
         if(userCart.user != req.user){
-            return res.json({ message: 'Cart doesnt belong to user'});
+            return res.status(401).json({ success: false, message: 'Unauthorised user'});
         }
         for( let item of userCart.items){
             const isProduct = await products.findById( item.product)
             if(!isProduct){
-                return res.json({ error: 'Product not found', item});
+                return res.status(404).json({ success: false, message: 'Item not found', item});
             }
             const isStock = await products.findOne( { _id: item.product, stock: { $gte: item.quantity}});
             if(!isStock){
-                return res.json({ error: 'Not enough stock', item});
+                return res.status(404).json({ success: false, message: 'Not enough stock', item});
             }
         }
         let orderItems = [];
@@ -36,7 +36,7 @@ const orderController = async ( req, res)=>{
                        _id: item.product, stock: { $gte: item.quantity} },
                        { $inc: { stock: -item.quantity } },{ new: true} )
             if( !checkItem){
-                return //what should I say
+                return res.status(404).json({ success: false, message: 'Item not found or out of stock', Item})
             }
             let order = { product: item.product, quantity: item.quantity }
                     
