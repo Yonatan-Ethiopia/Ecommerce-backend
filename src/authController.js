@@ -1,5 +1,6 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
+const jswebtoken =  
 const users = require('./src/models/usersModel')
 const Sign_In = async (req, res)=>{
   try{
@@ -18,4 +19,11 @@ const Sign_In = async (req, res)=>{
     const hashedPass = bcrypt.hash( Password, 10)
     await users.create({ Name, Username, hashedPass, email })
     res.status().json({ success: false, message: 'Registered successfully'})
+  }catch(err){
+    res.status(500).json({ success: false, message: 'Server error'})
+    console.error(err)
   }
+}
+const Log_In = (req, res)=>{
+  try{
+    const { Username, Password } = req.body;
