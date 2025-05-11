@@ -1,6 +1,6 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
-const JWT =  require('jsonwebtoken')
+const jwt =  require('jsonwebtoken')
 const users = require('./src/models/usersModel')
 const Sign_In = async (req, res)=>{
   try{
@@ -8,8 +8,8 @@ const Sign_In = async (req, res)=>{
     if( !Name || !Username || !Password || !email ){
       return res.status().json({ success: false, message: 'All fields must be filled' })
     }
-    presentU = await users.find({ Username })
-    presentE = await users.find({ email })
+    presentU = await users.find({ u=> u.Username === Username})
+    presentE = await users.find({ u=> u.email === email })
     if( presentU ){
       return res.status().json({ success: false, message: 'Username already taken'})
     }
@@ -38,7 +38,11 @@ const Log_In = async (req, res)=>{
     if( !matchPass ) {
       return res.status().json({ success: false, message: "Password doesn't match" })
     }
-    const token = JWT.env.process( isuper._id, bcrypt.hasb(Password, 10), JWT.TOKEN})
+    const token = jwt.sign( userId: isUser._id, password: bcrypt.hash(Password, 10), process.env.JWT_TOKEN})
+    if(!process.env.JWT_TOKEN){ 
+      console.log('Empty JWT_TOKEN in .env')
+      return res.status().json({ success: false, message: " Error while generating token" }
+    }
     res.status().json({ success: true, message: 'Log in successfull' , token})
   }catch(err){
     res.status(500).json({ success: false, message: 'Server error' })
