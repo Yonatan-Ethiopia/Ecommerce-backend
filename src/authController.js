@@ -38,11 +38,11 @@ const Log_In = async (req, res)=>{
     if( !matchPass ) {
       return res.status().json({ success: false, message: "Password doesn't match" })
     }
-    const token = jwt.sign( userId: isUser._id, password: bcrypt.hash(Password, 10), process.env.JWT_TOKEN})
     if(!process.env.JWT_TOKEN){ 
       console.log('Empty JWT_TOKEN in .env')
       return res.status().json({ success: false, message: " Error while generating token" }
     }
+    const token = jwt.sign( userId: isUser._id, password: bcrypt.hash(Password, 10), process.env.JWT_TOKEN})
     res.status().json({ success: true, message: 'Log in successfull' , token})
   }catch(err){
     res.status(500).json({ success: false, message: 'Server error' })
