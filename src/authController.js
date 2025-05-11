@@ -1,6 +1,6 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
-const jswebtoken =  
+const JWT =  require('jsonwebtoken')
 const users = require('./src/models/usersModel')
 const Sign_In = async (req, res)=>{
   try{
@@ -24,13 +24,13 @@ const Sign_In = async (req, res)=>{
     console.error(err)
   }
 }
-const Log_In = (req, res)=>{
+const Log_In = async (req, res)=>{
   try{
     const { Username, Password } = req.body;
     if( !Username || !password){
       return res.status().json({ success: false, message: 'Missing form' })
     }
-    const isUser = users.findOne({ username: Username });
+    const isUser = await users.findOne({ username: Username });
     if( !isUser ){
       return res.status(404).json({ success: false, message: "User doesn't exist" })
       }
@@ -38,11 +38,11 @@ const Log_In = (req, res)=>{
     if( !matchPass ) {
       return res.status().json({ success: false, message: "Password doesn't match" })
     }
-    res.status().json({ success: true, message: 'Log in successfull' })
+    const token = JWT.env.process( isuper._id, bcrypt.hasb(Password, 10), JWT.TOKEN})
+    res.status().json({ success: true, message: 'Log in successfull' , token})
   }catch(err){
     res.status(500).json({ success: false, message: 'Server error' })
     console.error(err)
   }
 }
-
-
+module.exports = { Sign_In, Log_In }
