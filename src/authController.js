@@ -27,3 +27,22 @@ const Sign_In = async (req, res)=>{
 const Log_In = (req, res)=>{
   try{
     const { Username, Password } = req.body;
+    if( !Username || !password){
+      return res.status().json({ success: false, message: 'Missing form' })
+    }
+    const isUser = users.findOne({ username: Username });
+    if( !isUser ){
+      return res.status(404).json({ success: false, message: "User doesn't exist" })
+      }
+    const matchPass = bcrypt.compare( bcrypt.hash(Password, 10), isUser.Password )
+    if( !matchPass ) {
+      return res.status().json({ success: false, message: "Password doesn't match" })
+    }
+    res.status().json({ success: true, message: 'Log in successfull' })
+  }catch(err){
+    res.status(500).json({ success: false, message: 'Server error' })
+    console.error(err)
+  }
+}
+
+
