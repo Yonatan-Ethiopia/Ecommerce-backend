@@ -17,7 +17,12 @@ const Sign_In = async (req, res)=>{
       return res.status().json({ success: false, message: 'Email already exists' })
     }
     const hashedPass = bcrypt.hash( Password, 10)
-    await users.create({ Name, Username, hashedPass, email })
+    const newUser = await users.create({ Name, Username, hashedPass, email })
+    if(!process.env.JWT_TOKEN){ 
+      console.log('Empty JWT_TOKEN in .env')
+      return res.status().json({ success: false, message: " Error while generating token" }
+    }
+    const token = jwt.sign( userId: newUser._id, password: hashedPass, process.env.JWT_TOKEN})
     res.status().json({ success: false, message: 'Registered successfully'})
   }catch(err){
     res.status(500).json({ success: false, message: 'Server error'})
