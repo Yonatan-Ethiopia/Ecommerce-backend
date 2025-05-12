@@ -16,4 +16,10 @@ const verify = async (req, res, next)=>{
   if(!process.env.JWT_SECRET){
     return res.status().json({ success: false, message: 'Secret token empty' })
   }
-  const is Verify = jwt.verify( )
+  const is Verify = jwt.verify( process.env.JWT_SECRET, token, ( err, user)=>{
+    if(err){
+      return res.status().json({ success: false, message: 'Token verification failed ' })
+    }
+    req.user = user;
+    next()
+  }
