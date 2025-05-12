@@ -3,9 +3,9 @@ const blacklist = require('./src/blacklists')
 const verify = async (req, res, next)=>{
   const auth = req.header[ 'authorization' ]
   if(!auth){
-    return res.status().json({ success: false, message: 'Token not found' })
+    return res.status().json({ success: false, message: 'Token is empty' })
   }
-  const token = auth.split([''], 1)
+  const token = auth.split['']( 1 )
   if(!token){
     return res.status().json({ success: false, message: 'Invalid token' })
   }
@@ -16,4 +16,4 @@ const verify = async (req, res, next)=>{
   if(!process.env.JWT_SECRET){
     return res.status().json({ success: false, message: 'Secret token empty' })
   }
-  const is Verify = jwt.verify( process.env.JWT_SECRET, token)
+  const is Verify = jwt.verify( )
