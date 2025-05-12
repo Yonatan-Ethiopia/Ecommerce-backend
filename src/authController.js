@@ -22,7 +22,7 @@ const Sign_In = async (req, res)=>{
       console.log('Empty JWT_TOKEN in .env')
       return res.status().json({ success: false, message: " Error while generating token" }
     }
-    const token = jwt.sign( userId: newUser._id, password: hashedPass, process.env.JWT_TOKEN})
+    const token = jwt.sign({ userId: newUser._id, password: hashedPass, process.env.JWT_TOKEN}, { expire: 24h})
     res.status().json({ success: false, message: 'Registered successfully'})
   }catch(err){
     res.status(500).json({ success: false, message: 'Server error'})
@@ -47,11 +47,15 @@ const Log_In = async (req, res)=>{
       console.log('Empty JWT_TOKEN in .env')
       return res.status().json({ success: false, message: " Error while generating token" }
     }
-    const token = jwt.sign( userId: isUser._id, password: bcrypt.hash(Password, 10), process.env.JWT_TOKEN})
+    const token = jwt.sign({ userId: isUser._id, password: bcrypt.hash(Password, 10), process.env.JWT_TOKEN}, { expire: 24hs} )
     res.status().json({ success: true, message: 'Log in successfull' , token})
   }catch(err){
     res.status(500).json({ success: false, message: 'Server error' })
     console.error(err)
   }
 }
+const Log_Out = await ( req, res )=>{
+    const auth = req.header['authorization']
+    const token = auth.split[''](1)
+  
 module.exports = { Sign_In, Log_In }
