@@ -1,3 +1,6 @@
 const express = require('express')
-const 
-const route = Route.express()
+const route = Router.express()
+const addToCart = require('./src/controllers/addToCartController')
+const auth = require('./src/middlewares/authMiddleware')
+route.post('api/cart/Add', auth, addToCart)
+module.exports = route;
